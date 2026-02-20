@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../store/userSlice";
@@ -6,7 +6,6 @@ import {
   FaSearch,
   FaUser,
   FaShoppingCart,
-  FaMapMarkerAlt,
   FaHeart,
   FaClipboardCheck,
   FaStar,
@@ -15,13 +14,10 @@ import {
   FaTimes,
   FaChevronDown,
 } from "react-icons/fa";
-import ProductService from "../../services/ProductService";
 
 const Header = () => {
   const [search, setSearch] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const menuRef = useRef(null);
@@ -29,52 +25,14 @@ const Header = () => {
 
   const { isLoggedIn, name } = useSelector((state) => state.user);
 
-  // Search logic
-  const fetchSuggestions = useCallback(async () => {
-    if (!search.trim()) {
-      setSuggestions([]);
-      setIsDropdownOpen(false);
-      return;
-    }
-    try {
-      const response = await ProductService.getFilteredProducts({
-        search,
-        size: 5,
-      });
-      setSuggestions(response.content || []);
-      setIsDropdownOpen(true);
-    } catch (error) {
-      console.error("Lỗi khi tìm kiếm sản phẩm:", error);
-    }
-  }, [search]);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchSuggestions();
-    }, 300);
-    return () => clearTimeout(delayDebounceFn);
-  }, [fetchSuggestions]);
-
   const handleLogout = () => {
     dispatch(logout());
     setIsMenuOpen(false);
     navigate("/login");
   };
 
-  const handleViewProduct = async (productId) => {
-    try {
-      const productDetails = await ProductService.getProductById(productId);
-      if (productDetails && productDetails.productCode) {
-        navigate(`/view-product/${productDetails.productCode}`);
-        setIsDropdownOpen(false);
-        setSearch("");
-      } else {
-        alert("Không thể tìm thấy mã sản phẩm.");
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
-      alert("Không thể xem chi tiết sản phẩm. Vui lòng thử lại.");
-    }
+  const handleViewProduct = (productId) => {
+    navigate(`/view-product/${productId}`);
   };
 
   useEffect(() => {
@@ -82,20 +40,13 @@ const Header = () => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-    if (!value.trim()) {
-      setIsDropdownOpen(false);
-    }
+    setSearch(e.target.value);
   };
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -108,11 +59,7 @@ const Header = () => {
           {/* Left: Logo & Brand */}
           <Link to="/" className="flex items-center gap-3 group flex-shrink-0 z-20">
             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 border-[#1E3A8A] shadow-sm group-hover:shadow-md transition-all">
-              <img
-                src="/src/assets/logo.jpg"
-                alt="Logo"
-                className="w-full h-full object-cover"
-              />
+              <div className="w-full h-full bg-[#1E3A8A] flex items-center justify-center text-white font-black text-lg">TB</div>
             </div>
             <div className="hidden sm:flex flex-col">
               <p className="text-xs text-gray-500 mb-0.5 font-medium">Chào mừng đến với</p>
@@ -133,37 +80,7 @@ const Header = () => {
               <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-[#1E3A8A] transition-colors" />
             </div>
 
-            {/* Search Suggestions Dropdown */}
-            {isDropdownOpen && suggestions.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-xl mt-3 overflow-hidden z-50 border border-gray-100 animate-fade-in-up">
-                <div className="p-3 bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  Sản phẩm gợi ý top 5
-                </div>
-                {suggestions.map((product) => (
-                  <div
-                    key={product.id}
-                    onClick={() => handleViewProduct(product.id)}
-                    className="flex items-center p-3 hover:bg-blue-50 cursor-pointer transition-colors border-b border-gray-50 last:border-b-0 group/item"
-                  >
-                    <div className="w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 group-hover/item:border-[#1E3A8A] transition-colors">
-                      <img
-                        src={product.photo}
-                        alt={product.nameProduct}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="ml-3 flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-800 truncate group-hover/item:text-[#1E3A8A] transition-colors">
-                        {product.nameProduct}
-                      </p>
-                      <p className="text-xs text-red-600 font-bold mt-0.5">
-                        {product.salePrice?.toLocaleString()}đ
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+
           </div>
 
           {/* Right: Navigation & User Actions */}
@@ -264,21 +181,7 @@ const Header = () => {
             />
             <FaSearch className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400" />
 
-            {/* Mobile Search Suggestions */}
-            {/* (Reusing same suggestion logic but styling for mobile if needed) */}
-            {isDropdownOpen && suggestions.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white shadow-xl rounded-xl mt-2 overflow-hidden z-50 border border-gray-100">
-                {suggestions.map((product) => (
-                  <div key={product.id} onClick={() => handleViewProduct(product.id)} className="flex items-center p-3 border-b border-gray-100 last:border-b-0 active:bg-gray-100">
-                    <img src={product.photo} className="w-10 h-10 object-cover rounded" />
-                    <div className="ml-3 truncate">
-                      <p className="text-sm font-medium text-gray-900 truncate">{product.nameProduct}</p>
-                      <p className="text-xs text-red-600 font-bold">{product.salePrice?.toLocaleString()}đ</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+
           </div>
 
           {/* Mobile Navigation Grid */}
