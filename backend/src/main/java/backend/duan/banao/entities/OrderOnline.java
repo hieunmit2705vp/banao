@@ -1,4 +1,4 @@
-package backend.datn.entities;
+package backend.duan.banao.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -1,4 +1,4 @@
-package backend.datn.entities;
+package backend.duan.banao.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class ProductDetail {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "size_id", nullable = false)
-    private backend.datn.entities.Size size;
+    private backend.duan.banao.entities.Size size;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

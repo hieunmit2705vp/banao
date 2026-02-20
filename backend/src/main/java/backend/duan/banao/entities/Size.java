@@ -1,4 +1,4 @@
-package backend.datn.entities;
+package backend.duan.banao.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
