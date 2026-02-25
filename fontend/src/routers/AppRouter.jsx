@@ -11,6 +11,7 @@ import adminRoutes from "./AdminRouter";
 import UserMain from "../layout/UserLayout/Layout";
 import UserRouter from "./UserRouter";
 
+// Import trang Login và Unauthorized
 import Login from "../pages/share/Login";
 import Unauthorized from "../pages/share/Unauthorized";
 import ForgotPasswordForm from "../pages/share/ForgotPassword";
@@ -20,19 +21,15 @@ import ProtectedRoute from "../components/ProtectedRoute";
 function AppRouter() {
   const { isLoggedIn, role } = useSelector((state) => state.user);
 
+  console.log("User Role:", role);
+
   return (
     <Router>
-      <Suspense
-        fallback={
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-lg font-semibold text-gray-500">Đang tải...</div>
-          </div>
-        }
-      >
+      <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
 
-          {/* Public Routes */}
+          {/* Route Public */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/forgot-password" element={<ForgotPasswordForm />} />
@@ -59,14 +56,13 @@ function AppRouter() {
                 element={<route.component />}
               />
             ))}
-            {/* Default admin → dashboard */}
-            <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
 
           {/* User Routes - Public + Protected */}
           <Route path="/" element={<UserMain />}>
             {UserRouter.map((route, index) => {
-              const publicRoutes = ["home", "products", "search", "view-product/:productCode"];
+              // ✅ Public routes - không cần login
+              const publicRoutes = ['home', 'products', 'search', 'view-product/:productCode', 'productsBanrd'];
               const isPublic = publicRoutes.includes(route.path);
 
               return (
@@ -87,7 +83,7 @@ function AppRouter() {
             })}
           </Route>
 
-          <Route path="*" element={<div className="min-h-screen flex items-center justify-center text-2xl font-bold text-gray-400">404 - Không tìm thấy trang</div>} />
+          <Route path="*" element={<div>404 - Page Not Found</div>} />
         </Routes>
       </Suspense>
     </Router>
