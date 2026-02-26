@@ -4,14 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ColorResponse implements Serializable {
+@Builder
+public class SleeveResponse implements Serializable {
     Integer id;
-    String colorName;
+    String sleeveName;
     Boolean status;
 }
