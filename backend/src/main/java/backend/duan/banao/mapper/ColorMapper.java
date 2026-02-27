@@ -9,7 +9,7 @@ public class ColorMapper {
     public static ColorResponse toColorResponse(Color color){
         return ColorResponse.builder()
                 .id(color.getId())
-                .name(color.getColorName())
+                .colorName(color.getColorName())
                 .status(color.getStatus())
                 .build();
     }

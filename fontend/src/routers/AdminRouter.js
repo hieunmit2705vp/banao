@@ -7,13 +7,15 @@ const Sleeve = lazy(() => import("../pages/admin/Attribute/Sleeve"));
 const Size = lazy(() => import("../pages/admin/Size"));
 const Brand = lazy(() => import("../pages/admin/Brand"));
 const Employee = lazy(() => import("../pages/admin/Employee"));
+const Category = lazy(() => import("../pages/admin/Category"));
 const adminRoutes = [
   { path: "dashboard", component: Dashboard, role: ["ADMIN", "STAFF"] },
   { path: "customers", component: Customer, role: ["ADMIN", "STAFF"] },
   { path: "attributes/sleeve", component: Sleeve, role: ["ADMIN", "STAFF"] },
   { path: "attribute/size", component: Size, role: ["ADMIN", "STAFF"] },
   { path: "brand", component: Brand, role: ["ADMIN", "STAFF"] },
-   { path: "employee", component: Employee, role: ["ADMIN"] }
-];
+  { path: "employee", component: Employee, role: ["ADMIN"] },
+  { path: "category", component: Category, role: ["ADMIN", "STAFF"] }
+  ];
 
 export default adminRoutes;
